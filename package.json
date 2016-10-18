@@ -1,0 +1,22 @@
+{
+  "name": "autocomplete-cfml",
+  "version": "0.0.1",
+  "description": "CFML element and attribute autocompletions",
+  "main": "./lib/main",
+  "license": "MIT",
+  "repository": "https://github.com/zoo1/autocomplete-cfml",
+  "engines": {
+    "atom": ">=0.174.0 <2.0.0"
+  },
+  "providedServices": {
+    "autocomplete.provider": {
+      "versions": {
+        "2.0.0": "getProvider"
+      }
+    }
+  },
+  "devDependencies": {
+    "coffeelint": "^1.9.7",
+    "xml2js": "^0.4.17"
+  }
+}
