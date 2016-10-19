@@ -73,27 +73,29 @@ module.exports =
 
   getTagNameCompletions: (prefix, openingTag) ->
     completions = []
-    for tag, attributes of @completions.tags when not prefix or firstCharsEqual(tag, prefix)
+    for tag, attributes of @completions.tags when not prefix or tag.indexOf(prefix) isnt -1
       completions.push(@buildTagCompletion(attributes, openingTag))
     completions
 
   buildTagCompletion: (attributes, openingTag) ->
-    tabStopIndex = 1
-    snippet = if openingTag then attributes.name else "<#{attributes.name}"
-    for attribute in attributes.parameter when attribute.required
-      snippet += " #{attribute.name}=\"$#{tabStopIndex++}\""
-    if attributes.name is "cfelse"
-      snippet += ">"
-    else
-      snippet += if attributes.single then " $#{tabStopIndex++}/>" else " $#{tabStopIndex++}>"
-    snippet += "\n\t$#{tabStopIndex++}\n</#{attributes.name}>" if attributes.endtagrequired
-    snippet += "$#{tabStopIndex++}"
-
-    snippet: snippet
-    displayText: tag
+    snippet: @buildTagSnippet(attributes, openingTag)
+    displayText: attributes.name
     type: 'tag'
     description: attributes.help
-    descriptionMoreURL: @getTagDocsURL(tag)
+    descriptionMoreURL: @getTagDocsURL(attributes.name)
+
+  buildTagSnippet: (attributes, openingTag) ->
+    name = attributes.name
+    tabStopIndex = 1
+    snippet = if openingTag then name else "<#{name}"
+    for attribute, properties of attributes.parameter when properties.required
+      snippet += " #{attribute}=\"$#{tabStopIndex++}\""
+    if name is "cfelse"
+      snippet += ">"
+    else
+      snippet += if not attributes.endtagrequired then " $#{tabStopIndex++}/>" else " $#{tabStopIndex++}>"
+    snippet += "\n\t$#{tabStopIndex++}\n</#{name}>" if attributes.endtagrequired
+    snippet + "$#{tabStopIndex++}"
 
   getAttributeNameCompletions: ({editor, bufferPosition}, prefix) ->
     completions = []
