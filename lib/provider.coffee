@@ -14,7 +14,11 @@ module.exports =
     {editor, bufferPosition, prefix} = request
     openTag = @hasOpenTag(editor.getBuffer(), bufferPosition, prefix.length)
 
-    if @isAttributeStartWithNoPrefix(request)
+    if @isAttributeValueStartWithNoPrefix(request)
+      @getAttributeValueCompletions(request)
+    else if @isAttributeValueStartWithPrefix(request)
+      @getAttributeValueCompletions(request, prefix)
+    else if @isAttributeStartWithNoPrefix(request)
       @getAttributeNameCompletions(request)
     else if @isAttributeStartWithPrefix(request)
       @getAttributeNameCompletions(request, prefix)
@@ -64,12 +68,22 @@ module.exports =
     scopes.indexOf('punctuation.definition.tag.cfml') isnt -1 or
       scopes.indexOf('punctuation.definition.tag.end.cfml') isnt -1
 
+  isAttributeValueStartWithNoPrefix: ({scopeDescriptor, prefix}) ->
+    false unless prefix.length is 0
+    scopes = scopeDescriptor.getScopesArray()
+    @hasStringScope(scopes) and @hasTagScope(scopes)
+
+  isAttributeValueStartWithPrefix: ({scopeDescriptor, prefix}) ->
+    false if prefix.length is 0
+    scopes = scopeDescriptor.getScopesArray()
+    @hasStringScope(scopes) and @hasTagScope(scopes)
+
   hasTagScope: (scopes) ->
     scopes.indexOf('meta.tag.cfml') isnt -1
 
   hasStringScope: (scopes) ->
-    scopes.indexOf('string.quoted.double.html') isnt -1 or
-      scopes.indexOf('string.quoted.single.html') isnt -1
+    scopes.indexOf('string.quoted.double.cfml') isnt -1 or
+      scopes.indexOf('string.quoted.single.cfml') isnt -1
 
   getTagNameCompletions: (prefix, openingTag) ->
     completions = []
@@ -111,21 +125,25 @@ module.exports =
     displayText: attribute.name
     type: 'attribute'
     rightLabel: "<#{tag}>"
-    description: attribute.help[0]
+    description: attribute.help
     descriptionMoreURL: @getTagDocsURL(tag)
 
   getAttributeValueCompletions: ({editor, bufferPosition}, prefix) ->
     tag = @getPreviousTag(editor, bufferPosition)
     attribute = @getPreviousAttribute(editor, bufferPosition)
-    values = @getAttributeValues(attribute)
-    for value in values when not prefix or firstCharsEqual(value, prefix)
-      @buildAttributeValueCompletion(tag, attribute, value)
+    attributeData = @getAttributeData(tag, attribute)
+    if attributeData.type is "boolean"
+      [
+        { text: 'false', type: 'value' }
+        { text: 'true', type: 'value' }
+      ]
+    else
+      for value in attributeData.values when not prefix or firstCharsEqual(value, prefix)
+        @buildAttributeValueCompletion(tag, attribute, value)
 
   buildAttributeValueCompletion: (tag, attribute, value) ->
     text: value
     type: 'value'
-    description: "#{value} value for #{attribute} attribute local to <#{tag}>"
-    descriptionMoreURL: @getTagDocsURL(tag)
 
   loadCompletions: ->
     @completions = {}
@@ -151,9 +169,8 @@ module.exports =
 
     attributePattern.exec(line)?[1]
 
-  getAttributeValues: (attribute) ->
-    attribute = @completions.attributes[attribute]
-    attribute?.attribOption ? []
+  getAttributeData: (tag, attribute) ->
+    attribute = @completions.tags[tag]?.parameter[attribute] ? []
 
   getTagAttributes: (tag) ->
     @completions.tags[tag]?.parameter ? []
