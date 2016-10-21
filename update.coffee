@@ -26,6 +26,7 @@ fs.readFile path.join(__dirname, 'dictionary/cf11.xml') , (err, data) ->
       for param in tag.parameter
         param.required = param.required[0]
         param.help = param.help[0]
+        param.name = param.name[0]
         param.type = param.type?[0] ? ""
         param.default = param.values?[0]?.default?[0] ? ""
         newValues = []

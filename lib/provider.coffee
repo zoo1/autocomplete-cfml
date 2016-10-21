@@ -69,9 +69,11 @@ module.exports =
       scopes.indexOf('punctuation.definition.tag.end.cfml') isnt -1
 
   isAttributeValueStartWithNoPrefix: ({scopeDescriptor, prefix}) ->
-    false unless prefix.length is 0
-    scopes = scopeDescriptor.getScopesArray()
-    @hasStringScope(scopes) and @hasTagScope(scopes)
+    if prefix.length isnt 0
+      false
+    else
+      scopes = scopeDescriptor.getScopesArray()
+      @hasStringScope(scopes) and @hasTagScope(scopes)
 
   isAttributeValueStartWithPrefix: ({scopeDescriptor, prefix}) ->
     false if prefix.length is 0
@@ -132,14 +134,10 @@ module.exports =
     tag = @getPreviousTag(editor, bufferPosition)
     attribute = @getPreviousAttribute(editor, bufferPosition)
     attributeData = @getAttributeData(tag, attribute)
-    if attributeData.type is "boolean"
-      [
-        { text: 'false', type: 'value' }
-        { text: 'true', type: 'value' }
-      ]
-    else
-      for value in attributeData.values when not prefix or firstCharsEqual(value, prefix)
-        @buildAttributeValueCompletion(tag, attribute, value)
+    if attributeData.type.toLowerCase() is "boolean"
+      attributeData.values = ['true','false']
+    for value in attributeData.values when not prefix or firstCharsEqual(value, prefix)
+      @buildAttributeValueCompletion(tag, attribute, value)
 
   buildAttributeValueCompletion: (tag, attribute, value) ->
     text: value
