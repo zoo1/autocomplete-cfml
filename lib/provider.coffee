@@ -10,6 +10,8 @@ module.exports =
   selector: '.text.cf, .text.html.cfml, .text.cf.cfscript'
   disableForSelector: '.comment'
 
+  suggestionPriority: 2
+
   getSuggestions: (request) ->
     {editor, bufferPosition, prefix} = request
     openTag = @hasOpenTag(editor.getBuffer(), bufferPosition, prefix.length)
