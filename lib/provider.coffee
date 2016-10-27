@@ -107,7 +107,7 @@ module.exports =
     tabStopIndex = 1
     snippet = if openingTag then name else "<#{name}"
     for attribute, properties of attributes.parameter when properties.required
-      snippet += " #{attribute}=\"$#{tabStopIndex++}\""
+      snippet += " #{attribute}=\"${#{tabStopIndex++}:#{properties.default}}\""
     if name is "cfelse"
       snippet += ">"
     else
@@ -125,7 +125,7 @@ module.exports =
     completions
 
   buildAttributeCompletion: (attribute, tag) ->
-    snippet: "#{attribute.name}=\"$1\"$0"
+    snippet: "#{attribute.name}=\"${1:#{attribute.default}}\" $2"
     displayText: attribute.name
     type: 'attribute'
     rightLabel: "<#{tag}>"
