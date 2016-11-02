@@ -136,6 +136,7 @@ module.exports =
     tag = @getPreviousTag(editor, bufferPosition)
     attribute = @getPreviousAttribute(editor, bufferPosition)
     attributeData = @getAttributeData(tag, attribute)
+    return [] unless attributeData?
     if attributeData.type.toLowerCase() is "boolean"
       attributeData.values = ['true','false']
     for value in attributeData.values when not prefix or firstCharsEqual(value, prefix)
@@ -170,7 +171,7 @@ module.exports =
     attributePattern.exec(line)?[1]
 
   getAttributeData: (tag, attribute) ->
-    attribute = @completions.tags[tag]?.parameter[attribute] ? []
+    attribute = @completions.tags[tag]?.parameter[attribute]
 
   getTagAttributes: (tag) ->
     @completions.tags[tag]?.parameter ? []
