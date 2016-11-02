@@ -4,6 +4,7 @@
 path = require 'path'
 fs = require 'fs'
 xml2js = require 'xml2js'
+clone = require 'clone'
 
 exitIfError = (error) ->
   if error?
@@ -35,6 +36,16 @@ fs.readFile path.join(__dirname, 'dictionary/cf11.xml') , (err, data) ->
         param.values = newValues
         newParams[param.name] = param
       tag.parameter = newParams
+
+      for combination in tag.possiblecombinations?[0]?.combination ? [] when combination.attributename? and tag.parameter[combination.attributename[0]]?
+        clonedTag = clone tag
+        clonedTag.parameter[combination.attributename[0]].required = true
+        if combination.required?[0]? and combination.required[0] != ""
+          combination.required[0].split(",").forEach((attribute) ->
+            clonedTag.parameter[attribute]?.required = true
+            )
+        newTags["#{tag.name} (#{combination.attributename[0]})"] = clonedTag
+
       newTags[tag.name] = tag
     result.dictionary.tags = newTags
     fs.writeFileSync(path.join(__dirname, 'dictionary/cf11.json'), "#{JSON.stringify(result.dictionary, null, 0)}\n".replace(/\\r\\n\s*/g, " ").replace(/"false"/g, "false").replace(/"true"/g, "true"))

@@ -16,6 +16,7 @@
     }
   },
   "devDependencies": {
+    "clone": "^2.0.0",
     "coffeelint": "^1.9.7",
     "xml2js": "^0.4.17"
   }

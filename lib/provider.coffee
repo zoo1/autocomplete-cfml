@@ -8,7 +8,7 @@ tagPattern = /<([a-zA-Z][-a-zA-Z]*)(?:\s|$)/
 
 module.exports =
   selector: '.text.cf, .text.html.cfml, .text.cf.cfscript'
-  disableForSelector: '.comment'
+  disableForSelector: '.comment, .source.js, source.css'
 
   suggestionPriority: 2
 
@@ -92,12 +92,12 @@ module.exports =
   getTagNameCompletions: (prefix, openingTag) ->
     completions = []
     for tag, attributes of @completions.tags when not prefix or tag.indexOf(prefix) isnt -1
-      completions.push(@buildTagCompletion(attributes, openingTag))
+      completions.push(@buildTagCompletion(tag, attributes, openingTag))
     completions
 
-  buildTagCompletion: (attributes, openingTag) ->
+  buildTagCompletion: (tag, attributes, openingTag) ->
     snippet: @buildTagSnippet(attributes, openingTag)
-    displayText: attributes.name
+    displayText: tag
     type: 'tag'
     description: attributes.help
     descriptionMoreURL: @getTagDocsURL(attributes.name)
