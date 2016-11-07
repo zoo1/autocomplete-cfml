@@ -2,7 +2,6 @@ fs = require 'fs'
 path = require 'path'
 {Point, Range} = require 'atom'
 
-trailingWhitespace = /\s$/
 attributePattern = /\s+([a-zA-Z][-a-zA-Z]*)\s*=\s*$/
 tagPattern = /<([a-zA-Z][-a-zA-Z]*)(?:\s|$)/
 
@@ -20,10 +19,10 @@ module.exports =
       @getAttributeValueCompletions(request)
     else if @isAttributeValueStartWithPrefix(request)
       @getAttributeValueCompletions(request, prefix)
-    else if @isAttributeStartWithNoPrefix(request)
-      @getAttributeNameCompletions(request)
     else if @isAttributeStartWithPrefix(request)
       @getAttributeNameCompletions(request, prefix)
+    else if @isAttributeStartWithNoPrefix(request)
+      @getAttributeNameCompletions(request)
     else if @isTagStartWithNoPrefix(request)
       @getTagNameCompletions(null, openTag)
     else if @isTagStartTagWithPrefix(request)
@@ -51,17 +50,13 @@ module.exports =
 
   isTagStartTagWithPrefix: ({prefix, scopeDescriptor}) ->
     return false unless prefix
-    return false if trailingWhitespace.test(prefix)
-    # @hasTagScope(scopeDescriptor.getScopesArray())
-    return true
+    not @hasTagScope(scopeDescriptor.getScopesArray())
 
   isAttributeStartWithNoPrefix: ({prefix, scopeDescriptor}) ->
-    return false unless trailingWhitespace.test(prefix)
     @hasTagScope(scopeDescriptor.getScopesArray())
 
   isAttributeStartWithPrefix: ({prefix, scopeDescriptor}) ->
     return false unless prefix
-    return false if trailingWhitespace.test(prefix)
 
     scopes = scopeDescriptor.getScopesArray()
     return true if scopes.indexOf('entity.other.attribute-name.cfml') isnt -1
