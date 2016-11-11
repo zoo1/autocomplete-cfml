@@ -1,5 +1,3 @@
-fs = require 'fs'
-path = require 'path'
 {Point, Range} = require 'atom'
 
 attributePattern = /\s+([a-zA-Z][-a-zA-Z]*)\s*=\s*$/
@@ -86,7 +84,7 @@ module.exports =
 
   getTagNameCompletions: (prefix, openingTag) ->
     completions = []
-    for tag, attributes of @completions.tags when not prefix or tag.indexOf(prefix) isnt -1
+    for tag, attributes of @tags when not prefix or tag.indexOf(prefix) isnt -1
       completions.push(@buildTagCompletion(tag, attributes, openingTag))
     completions
 
@@ -141,12 +139,6 @@ module.exports =
     text: value
     type: 'value'
 
-  loadCompletions: ->
-    @completions = {}
-    fs.readFile path.resolve(__dirname, '../dictionary', 'cf11.json'), (error, content) =>
-      @completions = JSON.parse(content) unless error?
-      return
-
   getPreviousTag: (editor, bufferPosition) ->
     {row} = bufferPosition
     while row >= 0
@@ -166,10 +158,10 @@ module.exports =
     attributePattern.exec(line)?[1]
 
   getAttributeData: (tag, attribute) ->
-    attribute = @completions.tags[tag]?.parameter[attribute]
+    attribute = @tags[tag]?.parameter[attribute]
 
   getTagAttributes: (tag) ->
-    @completions.tags[tag]?.parameter ? []
+    @tags[tag]?.parameter ? []
 
   getTagDocsURL: (tag) ->
     "https://cfdocs.org/#{tag}"
