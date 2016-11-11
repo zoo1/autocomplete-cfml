@@ -101,7 +101,7 @@ module.exports =
     snippet = if openingTag then name else "<#{name}"
     for attribute, properties of attributes.parameter when properties.required
       snippet += " #{attribute}=\"${#{tabStopIndex++}:#{properties.default}}\""
-    if name is "cfelse"
+    if name is "cfelse" or name is "cfoutput"
       snippet += ">"
     else
       snippet += if not attributes.endtagrequired then " $#{tabStopIndex++}/>" else " $#{tabStopIndex++}>"
