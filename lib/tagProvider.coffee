@@ -48,10 +48,10 @@ module.exports =
 
   isTagStartTagWithPrefix: ({prefix, scopeDescriptor}) ->
     return false unless prefix
-    not @hasTagScope(scopeDescriptor.getScopesArray())
+    not @hasTagScope(scopeDescriptor.getScopesArray()) or @isTagName(scopeDescriptor.getScopesArray())
 
   isAttributeStartWithNoPrefix: ({prefix, scopeDescriptor}) ->
-    @hasTagScope(scopeDescriptor.getScopesArray())
+    @hasTagScope(scopeDescriptor.getScopesArray()) and not @isTagName(scopeDescriptor.getScopesArray())
 
   isAttributeStartWithPrefix: ({prefix, scopeDescriptor}) ->
     return false unless prefix
@@ -77,6 +77,9 @@ module.exports =
 
   hasTagScope: (scopes) ->
     scopes.indexOf('meta.tag.cfml') isnt -1
+
+  isTagName: (scopes) ->
+    scopes.indexOf('entity.name.tag.cfml') isnt -1
 
   hasStringScope: (scopes) ->
     scopes.indexOf('string.quoted.double.cfml') isnt -1 or
