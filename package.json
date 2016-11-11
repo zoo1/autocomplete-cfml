@@ -1,6 +1,6 @@
 {
   "name": "autocomplete-cfml",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "CFML element and attribute autocompletions",
   "main": "./lib/main",
   "license": "MIT",
