@@ -20,6 +20,8 @@ fs.readFile path.join(__dirname, 'dictionary/cf11.xml') , (err, data) ->
     for tag in result.dictionary.tags[0].tag
       tag.parameter = [] unless tag.parameter?
       tag.help = tag.help[0]
+      if typeof tag.help is "object"
+        tag.help = tag.help["_"]
       tag.name = tag.name[0]
       tag.single = tag.single?[0] ? false
       tag.endtagrequired = tag.endtagrequired?[0] ? false

@@ -9,6 +9,8 @@ module.exports =
 
   suggestionPriority: 2
 
+  tags: {}
+
   getSuggestions: (request) ->
     {editor, bufferPosition, prefix} = request
     openTag = @hasOpenTag(editor.getBuffer(), bufferPosition, prefix.length)
