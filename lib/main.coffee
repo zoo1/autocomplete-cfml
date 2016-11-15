@@ -4,7 +4,7 @@ tagProvider = require './tagProvider'
 
 module.exports =
   activate: ->
-    fs.readFile path.resolve(__dirname, '../dictionary', 'cf11.json'), (error, content) =>
+    fs.readFile path.resolve(__dirname, '../dictionary', 'cf11.json'), (error, content) ->
       if error?
         atom.notifications.addError "Failed to load completions"
         tagProvider = null

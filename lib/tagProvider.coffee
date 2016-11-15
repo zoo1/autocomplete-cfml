@@ -13,7 +13,6 @@ module.exports =
 
   getSuggestions: (request) ->
     {editor, bufferPosition, prefix} = request
-    openTag = @hasOpenTag(editor.getBuffer(), bufferPosition, prefix.length)
 
     if @isAttributeValueStartWithNoPrefix(request)
       @getAttributeValueCompletions(request)
@@ -24,19 +23,11 @@ module.exports =
     else if @isAttributeStartWithNoPrefix(request)
       @getAttributeNameCompletions(request)
     else if @isTagStartWithNoPrefix(request)
-      @getTagNameCompletions(null, openTag)
+      @getTagNameCompletions(null, request)
     else if @isTagStartTagWithPrefix(request)
-      @getTagNameCompletions(prefix, openTag)
+      @getTagNameCompletions(prefix, request)
     else
       []
-
-  hasOpenTag: (buffer, bufferPosition, prefixLength) ->
-    if bufferPosition.column - prefixLength - 1 < 0
-      false
-    else
-      p1 = new Point(bufferPosition.row, bufferPosition.column - prefixLength - 1)
-      p2 = new Point(bufferPosition.row, bufferPosition.column - prefixLength)
-      buffer.getTextInRange(new Range(p1, p2)) is "<"
 
   isTagStartWithNoPrefix: ({prefix, scopeDescriptor}) ->
     scopes = scopeDescriptor.getScopesArray()
@@ -86,23 +77,24 @@ module.exports =
     scopes.indexOf('string.quoted.double.cfml') isnt -1 or
       scopes.indexOf('string.quoted.single.cfml') isnt -1
 
-  getTagNameCompletions: (prefix, openingTag) ->
+  getTagNameCompletions: (prefix, {editor, bufferPosition}) ->
     completions = []
+    openTag = @hasOpenTag(editor.getBuffer(), bufferPosition, if prefix? then prefix.length else 0)
     for tag, attributes of @tags when not prefix or tag.indexOf(prefix) isnt -1
-      completions.push(@buildTagCompletion(tag, attributes, openingTag))
+      completions.push(@buildTagCompletion(tag, attributes, openTag))
     completions
 
-  buildTagCompletion: (tag, attributes, openingTag) ->
-    snippet: @buildTagSnippet(attributes, openingTag)
+  buildTagCompletion: (tag, attributes, openTag) ->
+    snippet: @buildTagSnippet(attributes, openTag)
     displayText: tag
     type: 'tag'
     description: attributes.help
     descriptionMoreURL: @getTagDocsURL(attributes.name)
 
-  buildTagSnippet: (attributes, openingTag) ->
+  buildTagSnippet: (attributes, openTag) ->
     name = attributes.name
     tabStopIndex = 1
-    snippet = if openingTag then name else "<#{name}"
+    snippet = if openTag then name else "<#{name}"
     for attribute, properties of attributes.parameter when properties.required
       snippet += " #{attribute}=\"${#{tabStopIndex++}:#{properties.default}}\""
     if name is "cfelse" or name is "cfoutput"
@@ -135,13 +127,21 @@ module.exports =
     attributeData = @getAttributeData(tag, attribute)
     return [] unless attributeData?
     if attributeData.type.toLowerCase() is "boolean"
-      attributeData.values = ['true','false']
+      attributeData.values = ['true', 'false']
     for value in attributeData.values when not prefix or firstCharsEqual(value, prefix)
       @buildAttributeValueCompletion(tag, attribute, value)
 
   buildAttributeValueCompletion: (tag, attribute, value) ->
     text: value
     type: 'value'
+
+  hasOpenTag: (buffer, bufferPosition, prefixLength) ->
+    if bufferPosition.column - prefixLength - 1 < 0
+      false
+    else
+      p1 = new Point(bufferPosition.row, bufferPosition.column - prefixLength - 1)
+      p2 = new Point(bufferPosition.row, bufferPosition.column - prefixLength)
+      buffer.getTextInRange(new Range(p1, p2)) is "<"
 
   getPreviousTag: (editor, bufferPosition) ->
     {row} = bufferPosition
