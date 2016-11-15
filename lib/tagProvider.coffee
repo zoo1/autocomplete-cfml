@@ -66,11 +66,10 @@ module.exports =
       scopes.indexOf('punctuation.definition.tag.end.cfml') isnt -1
 
   isAttributeValueStartWithNoPrefix: ({scopeDescriptor, prefix}) ->
-    if prefix.length isnt 0
-      false
-    else
-      scopes = scopeDescriptor.getScopesArray()
-      @hasStringScope(scopes) and @hasTagScope(scopes)
+    lastPrefixCharacter = prefix[prefix.length - 1]
+    return false unless lastPrefixCharacter in ['"', "'"]
+    scopes = scopeDescriptor.getScopesArray()
+    @hasStringScope(scopes) and @hasTagScope(scopes)
 
   isAttributeValueStartWithPrefix: ({scopeDescriptor, prefix}) ->
     false if prefix.length is 0

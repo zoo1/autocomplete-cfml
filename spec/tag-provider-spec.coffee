@@ -128,3 +128,96 @@ describe "CFML tag autocompletions", ->
     completions = getCompletions()
     expect(completions[0].displayText).toBe 'directory'
     expect(completions[1].displayText).toBe 'dependson'
+
+  it "autocompletes attribute values without a prefix", ->
+    editor.setText('<cfhttp url="" method="" />')
+    editor.setCursorBufferPosition([0, 23])
+
+    completions = getCompletions()
+    expect(completions.length).toBe 7
+
+    expect(completions[0].text).toBe 'get'
+    expect(completions[0].type).toBe 'value'
+    expect(completions[1].text).toBe 'post'
+    expect(completions[2].text).toBe 'put'
+
+    editor.setText('<cfhttp url="" method=""')
+    editor.setCursorBufferPosition([0, 23])
+
+    completions = getCompletions()
+    expect(completions.length).toBe 7
+
+    expect(completions[0].text).toBe 'get'
+    expect(completions[1].text).toBe 'post'
+    expect(completions[2].text).toBe 'put'
+
+    editor.setText('<cfhttp url="" method="')
+    editor.setCursorBufferPosition([0, 23])
+
+    completions = getCompletions()
+    expect(completions.length).toBe 7
+
+    expect(completions[0].text).toBe 'get'
+    expect(completions[1].text).toBe 'post'
+    expect(completions[2].text).toBe 'put'
+
+    editor.setText('<cfhttp url="" method=\'\'')
+    editor.setCursorBufferPosition([0, 23])
+
+    completions = getCompletions()
+    expect(completions.length).toBe 7
+
+    expect(completions[0].text).toBe 'get'
+    expect(completions[1].text).toBe 'post'
+    expect(completions[2].text).toBe 'put'
+
+    editor.setText('<cfhttp url="" method=\'')
+    editor.setCursorBufferPosition([0, 23])
+
+    completions = getCompletions()
+    expect(completions.length).toBe 7
+
+    expect(completions[0].text).toBe 'get'
+    expect(completions[1].text).toBe 'post'
+    expect(completions[2].text).toBe 'put'
+
+  it "autocompletes attribute values with a prefix", ->
+    editor.setText('<cfparam name="" type="a" />')
+    editor.setCursorBufferPosition([0, 24])
+
+    completions = getCompletions()
+    expect(completions.length).toBe 2
+
+    expect(completions[0].text).toBe 'any'
+    expect(completions[0].type).toBe 'value'
+    expect(completions[1].text).toBe 'array'
+
+    editor.setText('<cfparam name="" type="a"')
+    editor.setCursorBufferPosition([0, 24])
+
+    completions = getCompletions()
+    expect(completions.length).toBe 2
+
+    expect(completions[0].text).toBe 'any'
+    expect(completions[0].type).toBe 'value'
+    expect(completions[1].text).toBe 'array'
+
+    editor.setText('<cfparam name="" type="A"')
+    editor.setCursorBufferPosition([0, 24])
+
+    completions = getCompletions()
+    expect(completions.length).toBe 2
+
+    expect(completions[0].text).toBe 'any'
+    expect(completions[0].type).toBe 'value'
+    expect(completions[1].text).toBe 'array'
+
+    editor.setText('<cfparam name="" type=\'A\'')
+    editor.setCursorBufferPosition([0, 24])
+
+    completions = getCompletions()
+    expect(completions.length).toBe 2
+
+    expect(completions[0].text).toBe 'any'
+    expect(completions[0].type).toBe 'value'
+    expect(completions[1].text).toBe 'array'
