@@ -12,7 +12,7 @@ module.exports =
   tags: {}
 
   getSuggestions: (request) ->
-    {editor, bufferPosition, prefix} = request
+    {prefix} = request
 
     if @isAttributeValueStartWithNoPrefix(request)
       @getAttributeValueCompletions(request)
@@ -29,14 +29,16 @@ module.exports =
     else
       []
 
-  isTagStartWithNoPrefix: ({prefix, scopeDescriptor}) ->
+  isTagStartWithNoPrefix: ({editor, bufferPosition, prefix, scopeDescriptor}) ->
     scopes = scopeDescriptor.getScopesArray()
     return false if @hasTagScope(scopes)
+    return false if @isEndTag(editor, bufferPosition, prefix.length)
     return true if prefix.length is 0
     /^<?(c?|(cf)?)$/.test(prefix)
 
-  isTagStartTagWithPrefix: ({prefix, scopeDescriptor}) ->
+  isTagStartTagWithPrefix: ({editor, bufferPosition, prefix, scopeDescriptor}) ->
     return false unless prefix
+    return false if @isEndTag(editor, bufferPosition, prefix.length)
     not @hasTagScope(scopeDescriptor.getScopesArray()) or @isTagName(scopeDescriptor.getScopesArray())
 
   isAttributeStartWithNoPrefix: ({prefix, scopeDescriptor}) ->
@@ -76,7 +78,7 @@ module.exports =
 
   getTagNameCompletions: (prefix, {editor, bufferPosition}) ->
     completions = []
-    openTag = @hasOpenTag(editor.getBuffer(), bufferPosition, if prefix? then prefix.length else 0)
+    openTag = @hasOpenTag(editor, bufferPosition, if prefix? then prefix.length else 0)
     for tag, attributes of @tags when not prefix or tag.indexOf(prefix) isnt -1
       completions.push(@buildTagCompletion(tag, attributes, openTag))
     completions
@@ -132,13 +134,18 @@ module.exports =
     text: value
     type: 'value'
 
-  hasOpenTag: (buffer, bufferPosition, prefixLength) ->
-    if bufferPosition.column - prefixLength - 1 < 0
-      false
-    else
-      p1 = new Point(bufferPosition.row, bufferPosition.column - prefixLength - 1)
-      p2 = new Point(bufferPosition.row, bufferPosition.column - prefixLength)
-      buffer.getTextInRange(new Range(p1, p2)) is "<"
+  hasOpenTag: (editor, bufferPosition, prefixLength) ->
+    {row, column} = bufferPosition
+    startColumn = column - prefixLength - 1
+    return false if startColumn < 0
+    editor.lineTextForBufferRow(row)[startColumn] is "<"
+
+  isEndTag: (editor, bufferPosition, prefixLength) ->
+    {row, column} = bufferPosition
+    startColumn = column - prefixLength - 2
+    return false if startColumn < 0
+    editor.lineTextForBufferRow(row)[startColumn] is "<" and
+      editor.lineTextForBufferRow(row)[startColumn + 1] is "/"
 
   getPreviousTag: (editor, bufferPosition) ->
     {row} = bufferPosition

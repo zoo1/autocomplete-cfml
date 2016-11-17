@@ -40,6 +40,16 @@ describe "CFML tag autocompletions", ->
     expect(completions.length).toBe 1
     expect(completions[0].displayText).toBe 'cfelseif'
 
+  it "returns no completions when at the start of a end tag", ->
+    editor.setText('</')
+    expect(getCompletions().length).toBe 0
+
+    editor.setText('</cf')
+    expect(getCompletions().length).toBe 0
+
+    editor.setText('</cflo')
+    expect(getCompletions().length).toBe 0
+
   it "autcompletes tag names without a prefix", ->
     editor.setText('<')
     editor.setCursorBufferPosition([0, 1])
