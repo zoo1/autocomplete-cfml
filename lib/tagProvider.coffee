@@ -5,7 +5,7 @@ tagPattern = /<([a-zA-Z][-a-zA-Z]*)(?:\s|$)/
 
 module.exports =
   selector: '.text.cf, .text.html.cfml, .text.cf.cfscript'
-  disableForSelector: '.comment, .source.js, source.css'
+  disableForSelector: '.comment, .source.js, .source.css, .source.cfscript'
 
   suggestionPriority: 2
 
