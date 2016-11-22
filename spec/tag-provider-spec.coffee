@@ -50,10 +50,34 @@ describe "CFML tag autocompletions", ->
     editor.setText('</cflo')
     expect(getCompletions().length).toBe 0
 
+  it "returns no completions when not at the start of a tag or cf", ->
+    editor.setText('')
+    expect(getCompletions().length).toBe 0
+
+    editor.setText(',')
+    expect(getCompletions().length).toBe 0
+
+    editor.setText('/')
+    expect(getCompletions().length).toBe 0
+
+    editor.setText('<cfset />')
+    expect(getCompletions().length).toBe 0
+
   it "autcompletes tag names without a prefix", ->
     editor.setText('<')
     editor.setCursorBufferPosition([0, 1])
+    expect(getCompletions().length).toBe 218
 
+    editor.setText('<c')
+    editor.setCursorBufferPosition([0, 2])
+    expect(getCompletions().length).toBe 218
+
+    editor.setText('<cf')
+    editor.setCursorBufferPosition([0, 3])
+    expect(getCompletions().length).toBe 218
+
+    editor.setText('cf')
+    editor.setCursorBufferPosition([0, 3])
     completions = getCompletions()
     expect(completions.length).toBe 218
 
