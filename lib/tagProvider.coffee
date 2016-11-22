@@ -33,10 +33,10 @@ module.exports =
     scopes = scopeDescriptor.getScopesArray()
     return false if @hasTagScope(scopes)
     return false if @isEndTag(editor, bufferPosition, prefix.length)
-    /^<?(c?|(cf)?)$/.test(prefix) and prefix.length
+    /^<?(c?|(cf)?)$/.test(prefix) and not /^\s*$/.test(prefix)
 
   isTagStartTagWithPrefix: ({editor, bufferPosition, prefix, scopeDescriptor}) ->
-    return false unless prefix
+    return false if /^\s*$/.test(prefix)
     return false if @isEndTag(editor, bufferPosition, prefix.length)
     not @hasTagScope(scopeDescriptor.getScopesArray()) or @isTagName(scopeDescriptor.getScopesArray())
 

@@ -60,6 +60,9 @@ describe "CFML tag autocompletions", ->
     editor.setText('/')
     expect(getCompletions().length).toBe 0
 
+    editor.setText(' ')
+    expect(getCompletions().length).toBe 0
+
     editor.setText('<cfset />')
     expect(getCompletions().length).toBe 0
 
