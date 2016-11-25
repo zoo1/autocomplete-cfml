@@ -40,11 +40,12 @@ module.exports =
     return false if @isEndTag(editor, bufferPosition, prefix.length)
     not @hasTagScope(scopeDescriptor.getScopesArray()) or @isTagName(scopeDescriptor.getScopesArray())
 
-  isAttributeStartWithNoPrefix: ({prefix, scopeDescriptor}) ->
+  isAttributeStartWithNoPrefix: ({editor, bufferPosition, prefix, scopeDescriptor}) ->
+    return false if @isPastTag(editor, bufferPosition, prefix.length)
     @hasTagScope(scopeDescriptor.getScopesArray()) and not @isTagName(scopeDescriptor.getScopesArray())
 
   isAttributeStartWithPrefix: ({prefix, scopeDescriptor}) ->
-    return false unless prefix
+    return false if /^\s*$/.test(prefix)
 
     scopes = scopeDescriptor.getScopesArray()
     return true if scopes.indexOf('entity.other.attribute-name.cfml') isnt -1
@@ -145,6 +146,12 @@ module.exports =
     return false if startColumn < 0
     editor.lineTextForBufferRow(row)[startColumn] is "<" and
       editor.lineTextForBufferRow(row)[startColumn + 1] is "/"
+
+  isPastTag: (editor, bufferPosition, prefixLength) ->
+    {row, column} = bufferPosition
+    startColumn = column - prefixLength - 1
+    return false if startColumn < 0
+    editor.lineTextForBufferRow(row)[startColumn] is ">"
 
   getPreviousTag: (editor, bufferPosition) ->
     {row} = bufferPosition

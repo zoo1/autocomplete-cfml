@@ -68,19 +68,15 @@ describe "CFML tag autocompletions", ->
 
   it "autcompletes tag names without a prefix", ->
     editor.setText('<')
-    editor.setCursorBufferPosition([0, 1])
     expect(getCompletions().length).toBe 218
 
     editor.setText('<c')
-    editor.setCursorBufferPosition([0, 2])
     expect(getCompletions().length).toBe 218
 
     editor.setText('<cf')
-    editor.setCursorBufferPosition([0, 3])
     expect(getCompletions().length).toBe 218
 
     editor.setText('cf')
-    editor.setCursorBufferPosition([0, 3])
     completions = getCompletions()
     expect(completions.length).toBe 218
 
@@ -92,7 +88,6 @@ describe "CFML tag autocompletions", ->
 
   it "autocompletes tag names with a prefix", ->
     editor.setText('cfsc')
-    editor.setCursorBufferPosition([0, 4])
 
     completions = getCompletions()
     expect(completions.length).toBe 2
@@ -116,7 +111,6 @@ describe "CFML tag autocompletions", ->
       expect(completion.type).toBe 'attribute'
 
     editor.setText('<cfdump ')
-    editor.setCursorBufferPosition([0, 7])
 
     completions = getCompletions()
     expect(completions.length).toBe 12
@@ -130,7 +124,6 @@ describe "CFML tag autocompletions", ->
 
   it "autocompletes attribute names with a prefix", ->
     editor.setText('<cfsetting r')
-    editor.setCursorBufferPosition([0, 13])
 
     completions = getCompletions()
     expect(completions.length).toBe 1
@@ -140,7 +133,6 @@ describe "CFML tag autocompletions", ->
     expect(completions[0].type).toBe 'attribute'
 
     editor.setText('<cfsetting R')
-    editor.setCursorBufferPosition([0, 13])
 
     completions = getCompletions()
     expect(completions.length).toBe 1
@@ -160,7 +152,6 @@ describe "CFML tag autocompletions", ->
     expect(completions[0].type).toBe 'attribute'
 
     editor.setText('<cfcache d')
-    editor.setCursorBufferPosition([0, 10])
 
     completions = getCompletions()
     expect(completions[0].displayText).toBe 'directory'
@@ -189,7 +180,6 @@ describe "CFML tag autocompletions", ->
     expect(completions[2].text).toBe 'put'
 
     editor.setText('<cfhttp url="" method="')
-    editor.setCursorBufferPosition([0, 23])
 
     completions = getCompletions()
     expect(completions.length).toBe 7
@@ -209,7 +199,6 @@ describe "CFML tag autocompletions", ->
     expect(completions[2].text).toBe 'put'
 
     editor.setText('<cfhttp url="" method=\'')
-    editor.setCursorBufferPosition([0, 23])
 
     completions = getCompletions()
     expect(completions.length).toBe 7
