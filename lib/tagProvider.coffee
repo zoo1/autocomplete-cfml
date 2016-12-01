@@ -36,13 +36,15 @@ module.exports =
     /^<?(c?|(cf)?)$/.test(prefix) and not /^\s*$/.test(prefix)
 
   isTagStartTagWithPrefix: ({editor, bufferPosition, prefix, scopeDescriptor}) ->
+    scopes = scopeDescriptor.getScopesArray()
     return false if /^\s*$/.test(prefix)
     return false if @isEndTag(editor, bufferPosition, prefix.length)
-    not @hasTagScope(scopeDescriptor.getScopesArray()) or @isTagName(scopeDescriptor.getScopesArray())
+    not @hasTagScope(scopes) or @isTagName(scopes)
 
   isAttributeStartWithNoPrefix: ({editor, bufferPosition, prefix, scopeDescriptor}) ->
+    scopes = scopeDescriptor.getScopesArray()
     return false if @isPastTag(editor, bufferPosition, prefix.length)
-    @hasTagScope(scopeDescriptor.getScopesArray()) and not @isTagName(scopeDescriptor.getScopesArray())
+    @hasTagScope(scopes) and not @isTagName(scopes)
 
   isAttributeStartWithPrefix: ({prefix, scopeDescriptor}) ->
     return false if /^\s*$/.test(prefix)
@@ -70,7 +72,8 @@ module.exports =
       scopes.indexOf('meta.tag.other.cfml') isnt -1
 
   isTagName: (scopes) ->
-    scopes.indexOf('entity.name.tag.cfml') isnt -1
+    scopes.indexOf('entity.name.tag.cfml') isnt -1 or
+      scopes.indexOf('punctuation.definition.tag.begin.cfml') isnt -1
 
   hasStringScope: (scopes) ->
     scopes.indexOf('string.quoted.double.cfml') isnt -1 or

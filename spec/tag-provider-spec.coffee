@@ -63,7 +63,11 @@ describe "CFML tag autocompletions", ->
     editor.setText(' ')
     expect(getCompletions().length).toBe 0
 
-    editor.setText('<cfset />')
+    editor.setText('<cfdump />')
+    expect(getCompletions().length).toBe 0
+
+    editor.setText('<cfdump />')
+    editor.setCursorBufferPosition([0, 0])
     expect(getCompletions().length).toBe 0
 
   it "autcompletes tag names without a prefix", ->
