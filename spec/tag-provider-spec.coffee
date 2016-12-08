@@ -70,6 +70,40 @@ describe "CFML tag autocompletions", ->
     editor.setCursorBufferPosition([0, 0])
     expect(getCompletions().length).toBe 0
 
+  it "returns no completions when in a limited scope without a prefix", ->
+    editor.setText('<cfquery >  </cfquery>')
+    editor.setCursorBufferPosition([0, 11])
+    expect(getCompletions().length).toBe 0
+
+    editor.setText('<script>  </script>')
+    editor.setCursorBufferPosition([0, 9])
+    expect(getCompletions().length).toBe 0
+
+    editor.setText('<style>  </style>')
+    editor.setCursorBufferPosition([0, 8])
+    expect(getCompletions().length).toBe 0
+
+    editor.setText('<cfquery > <c </cfquery>')
+    editor.setCursorBufferPosition([0, 13])
+    expect(getCompletions().length).toBe 0
+
+  it "autocompletes limit scope tag names with a prefix", ->
+    editor.setText('<cfquery > cfqu </cfquery>')
+    editor.setCursorBufferPosition([0, 15])
+
+    completions = getCompletions()
+    expect(completions.length).toBe 1
+    expect(completions[0].displayText).toBe 'cfqueryparam'
+    expect(completions[0].type).toBe 'tag'
+
+    editor.setText('<script> cfi </script>')
+    editor.setCursorBufferPosition([0, 12])
+
+    completions = getCompletions()
+    expect(completions.length).toBe 1
+    expect(completions[0].displayText).toBe 'cfif'
+    expect(completions[0].type).toBe 'tag'
+
   it "autcompletes tag names without a prefix", ->
     editor.setText('<')
     expect(getCompletions().length).toBe 218

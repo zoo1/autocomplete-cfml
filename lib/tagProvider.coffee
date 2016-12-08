@@ -5,11 +5,13 @@ tagPattern = /<([a-zA-Z][-a-zA-Z]*)(?:\s|$)/
 
 module.exports =
   selector: '.text.cf, .text.html.cfml, .text.cf.cfscript'
-  disableForSelector: '.comment, .source.js, .source.css, .source.cfscript'
+  disableForSelector: '.comment, .source.cfscript'
 
   suggestionPriority: 2
 
   tags: {}
+
+  limitedTags: ['cfelse','cfif','cfelseif','cfloop','cfloop (index)','cfloop (condition)','cfloop (query)','cfloop (list)','cfloop (array)','cfloop (file)','cfloop (collection)']
 
   getSuggestions: (request) ->
     {prefix} = request
@@ -79,10 +81,27 @@ module.exports =
     scopes.indexOf('string.quoted.double.cfml') isnt -1 or
       scopes.indexOf('string.quoted.single.cfml') isnt -1
 
-  getTagNameCompletions: (prefix, {editor, bufferPosition}) ->
+  hasLimitedScope: (scopes) ->
+    scopes.indexOf('meta.scope.cfquery.cfml') isnt -1 or
+      scopes.indexOf('source.css.embedded.html') isnt -1 or
+        scopes.indexOf('source.js.embedded.html') isnt -1
+
+  getTagNameCompletions: (prefix, {scopeDescriptor, editor, bufferPosition}) ->
     completions = []
+    scopes = scopeDescriptor.getScopesArray()
+
+    filteredTags = {}
+    if @hasLimitedScope(scopes) and not prefix?
+      return []
+    else if @hasLimitedScope(scopes)
+      filteredTags[value] = @tags[value] for value in @limitedTags
+      if scopes.indexOf('meta.scope.cfquery.cfml') isnt -1
+        filteredTags['cfqueryparam'] = @tags['cfqueryparam']
+    else
+      filteredTags = @tags
+
     openTag = @hasOpenTag(editor, bufferPosition, if prefix? then prefix.length else 0)
-    for tag, attributes of @tags when not prefix or tag.indexOf(prefix) isnt -1
+    for tag, attributes of filteredTags when not prefix or tag.indexOf(prefix) isnt -1
       completions.push(@buildTagCompletion(tag, attributes, openTag))
     completions
 
