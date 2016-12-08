@@ -118,8 +118,8 @@ module.exports =
     snippet = if openTag then name else "<#{name}"
     for attribute, properties of attributes.parameter when properties.required
       snippet += " #{attribute}=\"${#{tabStopIndex++}:#{properties.default}}\""
-    if name is "cfelse" or name is "cfoutput"
-      snippet += ">"
+    if name in ['cfelse', 'cfoutput','cfscript']
+      snippet += '>'
     else
       snippet += if not attributes.endtagrequired then " $#{tabStopIndex++}/>" else " $#{tabStopIndex++}>"
     snippet += "\n\t$#{tabStopIndex++}\n</#{name}>" if attributes.endtagrequired
@@ -160,20 +160,20 @@ module.exports =
     {row, column} = bufferPosition
     startColumn = column - prefixLength - 1
     return false if startColumn < 0
-    editor.lineTextForBufferRow(row)[startColumn] is "<"
+    editor.lineTextForBufferRow(row)[startColumn] is '<'
 
   isEndTag: (editor, bufferPosition, prefixLength) ->
     {row, column} = bufferPosition
     startColumn = column - prefixLength - 2
     return false if startColumn < 0
-    editor.lineTextForBufferRow(row)[startColumn] is "<" and
-      editor.lineTextForBufferRow(row)[startColumn + 1] is "/"
+    editor.lineTextForBufferRow(row)[startColumn] is '<' and
+      editor.lineTextForBufferRow(row)[startColumn + 1] is '/'
 
   isPastTag: (editor, bufferPosition, prefixLength) ->
     {row, column} = bufferPosition
     startColumn = column - prefixLength - 1
     return false if startColumn < 0
-    editor.lineTextForBufferRow(row)[startColumn] is ">"
+    editor.lineTextForBufferRow(row)[startColumn] is '>'
 
   getPreviousTag: (editor, bufferPosition) ->
     {row} = bufferPosition

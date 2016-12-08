@@ -16,6 +16,8 @@ fs.readFile path.join(__dirname, 'dictionary/cf11.xml') , (err, data) ->
   exitIfError err
   parser.parseString data, (err, result) ->
     exitIfError err
+
+    # Tag completions
     newTags = {}
     for tag in result.dictionary.tags[0].tag
       tag.parameter = [] unless tag.parameter?
@@ -50,4 +52,28 @@ fs.readFile path.join(__dirname, 'dictionary/cf11.xml') , (err, data) ->
 
       newTags[tag.name] = tag
     result.dictionary.tags = newTags
+
+    # Function completions
+    newFunctions = {}
+    for funct in result.dictionary.functions[0].function
+      continue if funct.name[0].includes('.') 
+      funct.parameter = [] unless funct.parameter?
+      funct.help = funct.help[0]
+      funct.name = funct.name[0]
+      funct.returns = funct.returns[0]
+      newParams = {}
+      for param in funct.parameter
+        param.required = param.required[0]
+        param.help = param.help?[0] ? ""
+        param.name = param.name[0]
+        param.type = param.type?[0] ? ""
+        newValues = []
+        for value in param.values?[0]?.value ? []
+          newValues.push if typeof(value) is "string" then value else value.option[0]
+        param.values = newValues
+        newParams[param.name] = param
+      funct.parameter = newParams
+
+      newFunctions[funct.name] = funct
+    result.dictionary.functions = newFunctions
     fs.writeFileSync(path.join(__dirname, 'dictionary/cf11.json'), "#{JSON.stringify(result.dictionary, null, 0)}\n".replace(/\\r\\n\s*/g, " ").replace(/"false"/g, "false").replace(/"true"/g, "true"))

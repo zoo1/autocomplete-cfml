@@ -1,6 +1,7 @@
 fs = require 'fs'
 path = require 'path'
 tagProvider = require './tagProvider'
+functionProvider = require './functionProvider'
 
 module.exports =
   activate: ->
@@ -11,5 +12,6 @@ module.exports =
       else
         completions = JSON.parse(content)
         tagProvider.tags = completions.tags
+        functionProvider.functions = completions.functions
 
-  getProvider: -> tagProvider
+  getProvider: -> [tagProvider, functionProvider]
