@@ -56,6 +56,7 @@ fs.readFile path.join(__dirname, 'dictionary/cf11.xml') , (err, data) ->
     # Function completions
     newFunctions = {}
     for funct in result.dictionary.functions[0].function
+      continue if funct.name[0].includes('.') 
       funct.parameter = [] unless funct.parameter?
       funct.help = funct.help[0]
       funct.name = funct.name[0]
@@ -66,7 +67,6 @@ fs.readFile path.join(__dirname, 'dictionary/cf11.xml') , (err, data) ->
         param.help = param.help?[0] ? ""
         param.name = param.name[0]
         param.type = param.type?[0] ? ""
-        param.default = param.values?[0]?.default?[0] ? ""
         newValues = []
         for value in param.values?[0]?.value ? []
           newValues.push if typeof(value) is "string" then value else value.option[0]
