@@ -87,7 +87,11 @@ describe "tag autocompletions", ->
     editor.setCursorBufferPosition([0, 13])
     expect(getCompletions().length).toBe 0
 
-  it "autocompletes limit scope tag names with a prefix", ->
+    editor.setText('<cfquery > loo </cfquery>')
+    editor.setCursorBufferPosition([0, 13])
+    expect(getCompletions().length).toBe 0
+
+  it "autocompletes limited scope tag names with a cf prefix", ->
     editor.setText('<cfquery > cfqu </cfquery>')
     editor.setCursorBufferPosition([0, 15])
 

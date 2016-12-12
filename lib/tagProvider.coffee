@@ -91,7 +91,7 @@ module.exports =
     scopes = scopeDescriptor.getScopesArray()
 
     filteredTags = {}
-    if @hasLimitedScope(scopes) and not prefix?
+    if @hasLimitedScope(scopes) and (not prefix? or prefix.substring(0, 2) != 'cf')
       return []
     else if @hasLimitedScope(scopes)
       filteredTags[value] = @tags[value] for value in @limitedTags
