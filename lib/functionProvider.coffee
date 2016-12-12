@@ -29,7 +29,7 @@ module.exports =
 
   getFunctionCompletions: ({prefix}) ->
     completions = []
-    for funct, attributes of @functions when funct.indexOf(prefix) isnt -1
+    for funct, attributes of @functions when firstCharsEqual(funct, prefix) and funct.toLowerCase().indexOf(prefix.toLowerCase()) isnt -1
       completions.push(@buildFunctionCompletion(funct, attributes))
     completions
 
