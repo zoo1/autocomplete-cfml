@@ -1,4 +1,4 @@
-describe "CFML tag autocompletions", ->
+describe "tag autocompletions", ->
   [editor, provider] = []
 
   getCompletions = ->
