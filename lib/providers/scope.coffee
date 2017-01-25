@@ -16,7 +16,7 @@ module.exports =
     return [] unless scopes
     scopes = scopes[0].trim().split(".")
     return [] unless scopes.length == 2 or scopes.length == 3
-    # return [] if scopes[0] == "this" and editor.getTitle() != "Application.cfc"
+    return [] if scopes[0] == "this" and editor.getTitle().toLowerCase() != "application.cfc"
     @getScopeCompletions(scopes)
 
   getScopeCompletions: (scopes) ->
