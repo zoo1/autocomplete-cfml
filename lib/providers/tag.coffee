@@ -1,5 +1,3 @@
-{Point, Range} = require 'atom'
-
 attributePattern = /\s+([a-zA-Z][-a-zA-Z]*)\s*=\s*$/
 tagPattern = /<([a-zA-Z][-a-zA-Z]*)(?:\s|$)/
 

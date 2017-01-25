@@ -18,7 +18,7 @@ describe "tag autocompletions", ->
     waitsForPromise -> atom.packages.activatePackage('language-cfml')
 
     runs ->
-      provider = atom.packages.getActivePackage('autocomplete-cfml').mainModule.getProvider()[0]
+      provider = atom.packages.getActivePackage('autocomplete-cfml').mainModule.getProvider()[2]
 
     waitsFor -> Object.keys(provider.tags).length > 0
     waitsForPromise -> atom.workspace.open('test.cfm')

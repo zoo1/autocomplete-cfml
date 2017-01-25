@@ -49,14 +49,14 @@ fs.readFile path.join(__dirname, 'dictionary/cf11.xml') , (err, data) ->
             clonedTag.parameter[attribute]?.required = true
             )
         newTags["#{tag.name} (#{combination.attributename[0]})"] = clonedTag
-
       newTags[tag.name] = tag
+
     result.dictionary.tags = newTags
 
     # Function completions
     newFunctions = {}
     for funct in result.dictionary.functions[0].function
-      continue if funct.name[0].includes('.') 
+      continue if funct.name[0].includes('.')
       funct.parameter = [] unless funct.parameter?
       funct.help = funct.help[0]
       funct.name = funct.name[0]
@@ -73,7 +73,27 @@ fs.readFile path.join(__dirname, 'dictionary/cf11.xml') , (err, data) ->
         param.values = newValues
         newParams[param.name] = param
       funct.parameter = newParams
-
       newFunctions[funct.name] = funct
+
     result.dictionary.functions = newFunctions
+
+    #Scope completions
+    newScopes = {}
+    for scope in result.dictionary.cfscopes[0].scopevar
+      continue unless scope.scopevar?
+      name = scope.name[0]
+      newScopes[name.toLowerCase()] = {}
+      for innerScope in scope.scopevar
+        innerScope.name = innerScope.name[0]
+        innerScope.help = innerScope.help?[0] ? ""
+        newVars = {}
+        for innerVar in innerScope.scopevar ? []
+          innerVar.name = innerVar.name[0]
+          innerVar.help = innerVar.help?[0] ? ""
+          newVars[innerVar.name] = innerVar
+        innerScope.vars = newVars
+        newScopes[name.toLowerCase()][innerScope.name.toLowerCase()] = innerScope
+
+    result.dictionary.scopes = newScopes
+
     fs.writeFileSync(path.join(__dirname, 'dictionary/cf11.json'), "#{JSON.stringify(result.dictionary, null, 0)}\n".replace(/\\r\\n\s*/g, " ").replace(/"false"/g, "false").replace(/"true"/g, "true"))

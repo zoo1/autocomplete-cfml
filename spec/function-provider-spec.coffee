@@ -18,7 +18,7 @@ describe "function autocompletions", ->
     waitsForPromise -> atom.packages.activatePackage('language-cfml')
 
     runs ->
-      provider = atom.packages.getActivePackage('autocomplete-cfml').mainModule.getProvider()[1]
+      provider = atom.packages.getActivePackage('autocomplete-cfml').mainModule.getProvider()[0]
 
     waitsFor -> Object.keys(provider.functions).length > 0
     waitsForPromise -> atom.workspace.open('test.cfm')
