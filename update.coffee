@@ -90,7 +90,7 @@ fs.readFile path.join(__dirname, 'dictionary/cf11.xml') , (err, data) ->
         for innerVar in innerScope.scopevar ? []
           innerVar.name = innerVar.name[0]
           innerVar.help = innerVar.help?[0] ? ""
-          newVars[innerVar.name] = innerVar
+          newVars[innerVar.name.toLowerCase()] = innerVar
         innerScope.vars = newVars
         newScopes[name.toLowerCase()][innerScope.name.toLowerCase()] = innerScope
 

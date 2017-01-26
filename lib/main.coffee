@@ -1,9 +1,9 @@
 fs = require 'fs'
 path = require 'path'
 providers = []
-providers[0] = require './providers/function'
-providers[1] = require './providers/scope'
-providers[2] = require './providers/tag'
+providers[0] = require './provider/function'
+providers[1] = require './provider/scope'
+providers[2] = require './provider/tag'
 
 module.exports =
   activate: ->
