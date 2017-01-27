@@ -43,7 +43,7 @@ module.exports =
     tabStopIndex = 1
     snippet = "#{name}("
     for attribute, properties of attributes.parameter when properties.required
-      if tabStopIndex == 1
+      if tabStopIndex is 1
         snippet += "${#{tabStopIndex++}:#{attribute}}"
       else
         snippet += ", ${#{tabStopIndex++}:#{attribute}}"

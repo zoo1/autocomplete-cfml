@@ -9,33 +9,34 @@ module.exports =
   scopes: {}
 
   getSuggestions: ({editor, bufferPosition, prefix}) ->
-    return [] if bufferPosition.column == 0
+    return [] if bufferPosition.column is 0
 
     line = editor.getTextInRange([[bufferPosition.row, 0], bufferPosition])
     scopes = line.match(scopePattern)
     return [] if scopes? and scopes[2]? and scopes[2].includes("..")
     scopes = scopes[2].split(".")
-    return [] unless scopes.length == 2 or scopes.length == 3
-    return [] if scopes[0] == "this" and editor.getTitle().toLowerCase() != "application.cfc"
+    return [] unless scopes.length in [2, 3]
+    return [] if scopes[0] is "this" and editor.getTitle().toLowerCase() isnt "application.cfc"
     @getScopeCompletions(scopes)
 
   getScopeCompletions: (scopes) ->
     currentScope = @scopes[scopes[0].toLowerCase()]
     return [] unless currentScope
     #single scope ending with .
-    return @buildCompletionForScope(currentScope) if scopes[1].length == 0
+    return @buildCompletionForScope(currentScope) if scopes[1].length is 0
     innerScope = currentScope[scopes[1].toLowerCase()]
     #double scope without .
     return @buildCompletionForScope([innerScope]) if innerScope and not scopes[2]?
     #double scope ending with a . or a prefix
-    return @buildCompletionForScope(innerScope.vars, scopes[2]) if innerScope
+    return @buildCompletionForScope(innerScope, scopes[2]) if innerScope
     @buildCompletionForScope(currentScope, scopes[1])
 
   buildCompletionForScope: (scope, prefix) ->
     completions = []
-    for name, attributes of scope when not prefix or name.indexOf(prefix.toLowerCase()) == 0
+    for name, attributes of scope when (not prefix or name.indexOf(prefix.toLowerCase()) is 0) and name[0] isnt '_'
       completions.push
-        text: attributes.name
-        type: 'value'
-        description: attributes.help
+        text: attributes._name
+        type: 'property'
+        description: attributes._help
+        leftLabel: attributes._type
     completions

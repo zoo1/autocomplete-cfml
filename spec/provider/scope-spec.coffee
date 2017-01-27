@@ -53,7 +53,7 @@ describe "scope autocompletions", ->
     expect(completions[0].text).toBe 'CFID'
 
     for completion in completions
-      expect(completion.type).toBe 'value'
+      expect(completion.type).toBe 'property'
 
     editor.setText('SESSION.')
     completions = getCompletions()
@@ -64,7 +64,7 @@ describe "scope autocompletions", ->
     expect(completions.length).toBe 2
 
     for completion in completions
-      expect(completion.type).toBe 'value'
+      expect(completion.type).toBe 'property'
 
   it "returns limited completions for a first level scope with a prefix", ->
     editor.setText('session.C')
@@ -73,7 +73,7 @@ describe "scope autocompletions", ->
     expect(completions[0].text).toBe 'CFID'
 
     for completion in completions
-      expect(completion.type).toBe 'value'
+      expect(completion.type).toBe 'property'
 
     editor.setText('SESSION.c')
     completions = getCompletions()
@@ -84,20 +84,20 @@ describe "scope autocompletions", ->
     expect(completions.length).toBe 6
 
     for completion in completions
-      expect(completion.type).toBe 'value'
+      expect(completion.type).toBe 'property'
 
   it "returns single completion for a first level scope with exact match", ->
     editor.setText('<cfset writeDump(cgi.HTTP_CONNECTION')
     completions = getCompletions()
     expect(completions.length).toBe 1
     expect(completions[0].text).toBe 'HTTP_CONNECTION'
-    expect(completions[0].type).toBe 'value'
+    expect(completions[0].type).toBe 'property'
  
     editor.setText('<cfset test = session.cfid')
     completions = getCompletions()
     expect(completions.length).toBe 1
     expect(completions[0].text).toBe 'CFID'
-    expect(completions[0].type).toBe 'value'
+    expect(completions[0].type).toBe 'property'
 
   it "returns completions for a second level scope without prefix", ->
     editor.setText('this.s3.')
@@ -106,14 +106,14 @@ describe "scope autocompletions", ->
     expect(completions[0].text).toBe 'accessKeyId'
 
     for completion in completions
-      expect(completion.type).toBe 'value'
+      expect(completion.type).toBe 'property'
 
     editor.setText('<cfset test = THIS.wssettings.')
     completions = getCompletions()
-    expect(completions.length).toBe 6
+    expect(completions.length).toBe 4
 
     for completion in completions
-      expect(completion.type).toBe 'value'
+      expect(completion.type).toBe 'property'
 
   it "returns limited completions for a second level scope with a prefix", ->
     editor.setText('this.s3.a')
@@ -122,18 +122,18 @@ describe "scope autocompletions", ->
     expect(completions[0].text).toBe 'accessKeyId'
 
     for completion in completions
-      expect(completion.type).toBe 'value'
+      expect(completion.type).toBe 'property'
 
   it "returns single completion for a second level scope with exact match", ->
     editor.setText('<cfset writeDump(this.s3.accessKeyId')
     completions = getCompletions()
     expect(completions.length).toBe 1
     expect(completions[0].text).toBe 'accessKeyId'
-    expect(completions[0].type).toBe 'value'
+    expect(completions[0].type).toBe 'property'
 
     editor.setText('<cfset test = this.s3.defaultLocation')
     completions = getCompletions()
     expect(completions.length).toBe 1
     expect(completions[0].text).toBe 'defaultLocation'
-    expect(completions[0].type).toBe 'value'
+    expect(completions[0].type).toBe 'property'
 

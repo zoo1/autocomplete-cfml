@@ -9,7 +9,7 @@ module.exports =
 
   tags: {}
 
-  limitedTags: ['cfelse','cfif','cfelseif','cfloop','cfloop (index)','cfloop (condition)','cfloop (query)','cfloop (list)','cfloop (array)','cfloop (file)','cfloop (collection)']
+  limitedTags: ['cfelse', 'cfif', 'cfelseif', 'cfloop', 'cfloop (index)', 'cfloop (condition)', 'cfloop (query)', 'cfloop (list)', 'cfloop (array)', 'cfloop (file)', 'cfloop (collection)']
 
   getSuggestions: (request) ->
     {prefix} = request
@@ -89,7 +89,7 @@ module.exports =
     scopes = scopeDescriptor.getScopesArray()
 
     filteredTags = {}
-    if @hasLimitedScope(scopes) and (not prefix? or prefix.substring(0, 2) != 'cf')
+    if @hasLimitedScope(scopes) and (not prefix? or prefix.substring(0, 2) isnt 'cf')
       return []
     else if @hasLimitedScope(scopes)
       filteredTags[value] = @tags[value] for value in @limitedTags
@@ -116,7 +116,7 @@ module.exports =
     snippet = if openTag then name else "<#{name}"
     for attribute, properties of attributes.parameter when properties.required
       snippet += " #{attribute}=\"${#{tabStopIndex++}:#{properties.default}}\""
-    if name in ['cfelse','cfoutput','cfscript','cfsilent']
+    if name in ['cfelse', 'cfoutput', 'cfscript', 'cfsilent']
       snippet += '>'
     else
       snippet += if not attributes.endtagrequired then " $#{tabStopIndex++}/>" else " $#{tabStopIndex++}>"
