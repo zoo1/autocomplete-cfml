@@ -46,6 +46,10 @@ describe "scope autocompletions", ->
     completions = getCompletions()
     expect(completions.length).toBe 0
 
+    editor.setText('<')
+    completions = getCompletions()
+    expect(completions.length).toBe 0
+
   it "returns completions for a first level scope without prefix", ->
     editor.setText('session.')
     completions = getCompletions()

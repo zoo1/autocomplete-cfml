@@ -13,7 +13,7 @@ module.exports =
 
     line = editor.getTextInRange([[bufferPosition.row, 0], bufferPosition])
     scopes = line.match(scopePattern)
-    return [] if scopes? and scopes[2]? and scopes[2].includes("..")
+    return [] unless scopes? and scopes[2]? and not scopes[2].includes("..")
     scopes = scopes[2].split(".")
     return [] unless scopes.length in [2, 3]
     return [] if scopes[0] is "this" and editor.getTitle().toLowerCase() isnt "application.cfc"
