@@ -34,6 +34,7 @@ module.exports =
   buildFunctionCompletion: (funct, attributes) ->
     snippet: @buildFunctionSnippet(attributes)
     displayText: funct
+    leftLabel: attributes.returns
     type: 'function'
     description: attributes.help
     descriptionMoreURL: @getFunctionDocsURL(attributes.name)

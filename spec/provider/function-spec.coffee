@@ -42,6 +42,7 @@ describe "function autocompletions", ->
 
     expect(completions[0].displayText).toBe 'abs'
     expect(completions[0].type).toBe 'function'
+    expect(completions[0].leftLabel).toBe 'Numeric'
 
     editor.setText('<cfscript>abs(12);v')
 
@@ -50,6 +51,7 @@ describe "function autocompletions", ->
 
     expect(completions[0].displayText).toBe 'val'
     expect(completions[0].type).toBe 'function'
+    expect(completions[0].leftLabel).toBe 'Numeric'
     expect(completions[1].displayText).toBe 'valueList'
     expect(completions[2].displayText).toBe 'verifyClient'
 
